@@ -1,4 +1,4 @@
-# todo-swagger-api - API
+# todo-swagger-api
 
 ## Overview
 
