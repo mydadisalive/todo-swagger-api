@@ -46,19 +46,43 @@ To use the CLI:
 python cli/cli.py --help
 ```
 
-Explore how to use different CLI commands that interact with the API.
+List all todos
+```bash
+python cli/cli.py list-todos
+```
+
+Create a new todo:
+```bash
+python cli/cli.py create-todo "New Todo Title" "Optional description"
+```
+
+Get a todo by ID:
+```bash
+python cli/cli.py get-todo <todo_id>
+```
+
+Update a todo by ID:
+```bash
+python cli/cli.py update-todo <todo_id> "Updated Title" "Updated description"
+```
+
+Delete a todo by ID:
+```bash
+python cli/cli.py delete-todo <todo_id>
+```
 
 ## API Documentation
-
 Explore the API endpoints using Swagger UI:
-[Swagger UI: http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 ## Testing
 
 Run tests for both the API and CLI:
 
 ```bash
-bash run_tests.sh
+bash run_tests.sh # or pytest
 ```
 
 Instructions on how to run specific tests and any additional setup required for testing environments.
