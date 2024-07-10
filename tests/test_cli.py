@@ -1,21 +1,32 @@
 import subprocess
 import pytest
-import time
-
-# Fixture to start and stop the server
-@pytest.fixture(scope="module", autouse=True)
-def start_server():
-    # Start the server
-    server = subprocess.Popen(["uvicorn", "api.main:app", "--reload"])
-    time.sleep(2)  # Wait for the server to start
-    yield
-    # Stop the server
-    server.terminate()
-    server.wait()
 
 def run_cli_command(command):
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
     return result
+
+def reset_todos():
+    # Explicitly clear and reset todos
+    run_cli_command('python cli/cli.py delete-todo 1')
+    run_cli_command('python cli/cli.py delete-todo 2')
+    run_cli_command('python cli/cli.py delete-todo 3')
+    run_cli_command('python cli/cli.py delete-todo 4')
+    run_cli_command('python cli/cli.py delete-todo 5')
+    run_cli_command('python cli/cli.py delete-todo 6')
+    run_cli_command('python cli/cli.py delete-todo 7')
+    run_cli_command('python cli/cli.py delete-todo 8')
+    run_cli_command('python cli/cli.py delete-todo 9')
+    run_cli_command('python cli/cli.py delete-todo 10')
+    run_cli_command('python cli/cli.py create-todo "Buy groceries" "Milk, Bread, Cheese"')
+    run_cli_command('python cli/cli.py create-todo "Read a book" "The Catcher in the Rye"')
+
+@pytest.fixture(scope="function", autouse=True)
+def setup_and_teardown():
+    # Setup: Reset todos
+    reset_todos()
+    yield
+    # Teardown: Clean up after tests
+    reset_todos()
 
 def test_list_todos():
     result = run_cli_command("python cli/cli.py list-todos")
@@ -28,7 +39,7 @@ def test_create_todo():
     result = run_cli_command('python cli/cli.py create-todo "Test Todo" "This is a test todo"')
     assert result.returncode == 0
     output = result.stdout.strip()
-    assert "Created todo: ID:" in output
+    assert "Created todo: ID: 3, Title: Test Todo, Completed: False" in output
 
 def test_get_todo():
     result = run_cli_command("python cli/cli.py get-todo 1")
