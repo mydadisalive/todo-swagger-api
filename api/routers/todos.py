@@ -33,7 +33,7 @@ async def get_todo(todo_id: int):
 @router.post("/todos", response_model=Todo)
 async def create_todo(todo: TodoCreate):
     new_id = max(todo['id'] for todo in todos) + 1 if todos else 1
-    new_todo = todo.dict()
+    new_todo = todo.model_dump()  # Changed from dict() to model_dump()
     new_todo["id"] = new_id
     todos.append(new_todo)
     return new_todo
@@ -42,7 +42,7 @@ async def create_todo(todo: TodoCreate):
 async def update_todo(todo_id: int, updated_todo: Todo):
     for index, todo in enumerate(todos):
         if todo["id"] == todo_id:
-            todos[index] = updated_todo.dict()
+            todos[index] = updated_todo.model_dump()  # Changed from dict() to model_dump()
             return updated_todo
     raise HTTPException(status_code=404, detail="Todo not found")
 
