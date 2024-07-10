@@ -10,7 +10,7 @@ This project consists of two main components:
 
 1. Clone the repository:
 
-git clone [<repository-url>](https://github.com/mydadisalive/todo-swagger-api.git)
+git clone [todo-swagger-api.git](https://github.com/mydadisalive/todo-swagger-api.git)
 cd todo-swagger-api
 
 
