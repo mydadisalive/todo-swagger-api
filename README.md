@@ -11,28 +11,41 @@ This project consists of two main components:
 1. Clone the repository:
 
 git clone [todo-swagger-api.git](https://github.com/mydadisalive/todo-swagger-api.git)
-cd todo-swagger-api
 
+```bash
+cd todo-swagger-api
+```
 
 2. Set up a virtual environment (recommended):
+
+```bash
 python -m venv venv
 source venv/bin/activate # On Windows: .\venv\Scripts\activate
+```
 
 3. Install dependencies for both the API and CLI:
-pip install -r requirements.txt
 
+```bash
+pip install -r requirements.txt
+```
 
 ## Running the Project
 
 ### Running the API
 To run the API server using Uvicorn:
+
+```bash
 uvicorn api.main --reload
+```
 
 The API will be available at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ### Using the CLI
 To use the CLI:
+
+```bash
 python cli/cli.py --help
+```
 
 Explore how to use different CLI commands that interact with the API.
 
@@ -44,7 +57,10 @@ Explore the API endpoints using Swagger UI:
 ## Testing
 
 Run tests for both the API and CLI:
+
+```bash
 pytest
+```
 
 Instructions on how to run specific tests and any additional setup required for testing environments.
 
