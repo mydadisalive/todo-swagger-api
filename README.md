@@ -58,7 +58,7 @@ Explore the API endpoints using Swagger UI:
 Run tests for both the API and CLI:
 
 ```bash
-pytest
+bash run_tests.sh
 ```
 
 Instructions on how to run specific tests and any additional setup required for testing environments.
