@@ -85,16 +85,56 @@ def websocket_command():
     async def connect_websocket():
         async with websockets.connect(websocket_url) as websocket:
             click.echo("Connected to the WebSocket server.")
-            while True:
-                command = input("Enter command: ")
-                await websocket.send(command)
-                response = await websocket.recv()
-                click.echo(f"Received: {response}")
+            try:
+                while True:
+                    command = input("Enter command: (type help for help) ")
+                    await websocket.send(command)
+                    response = await websocket.recv()
+                    click.echo(f"Received: {response}")
+                    if command == "exit":
+                        break
+            except websockets.exceptions.ConnectionClosed:
+                click.echo("WebSocket connection closed")
+            finally:
+                await websocket.close()
 
     try:
         asyncio.run(connect_websocket())
     except Exception as e:
         click.echo(f"Error: {e}")
+
+@cli.command(name="help")
+def help_command():
+    """Prints the available commands and usage examples."""
+    help_text = """
+Available Commands:
+  list-todos           List all todos.
+  get-todo <todo_id>   Get a todo by ID.
+  create-todo <title> [description]  Create a new todo.
+  update-todo <todo_id> <title> [description] [--completed]  Update a todo by ID.
+  delete-todo <todo_id> Delete a todo by ID.
+  websocket            Connect to the WebSocket server.
+
+Usage Examples:
+  List all todos:
+    python cli/cli.py list-todos
+
+  Get a todo by ID:
+    python cli/cli.py get-todo 1
+
+  Create a new todo:
+    python cli/cli.py create-todo "New Task" "Task description"
+
+  Update a todo by ID:
+    python cli/cli.py update-todo 1 "Updated Task" "Updated description" --completed
+
+  Delete a todo by ID:
+    python cli/cli.py delete-todo 1
+
+  Connect to the WebSocket server:
+    python cli/cli.py websocket
+"""
+    click.echo(help_text)
 
 if __name__ == '__main__':
     cli()
