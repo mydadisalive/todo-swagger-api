@@ -71,6 +71,35 @@ Delete a todo by ID:
 python cli/cli.py delete-todo <todo_id>
 ```
 
+## WebSocket Functionality
+In addition to the traditional REST API and CLI, this project also supports WebSocket for real-time communication.
+
+To use the WebSocket functionality, run the following command:
+
+```bash
+python cli/cli.py websocket
+```
+
+Once connected, you can enter commands interactively. Supported commands include:
+
+List all todos
+list-todos
+
+Expected Response:
+[{"id": 1, "title": "Buy groceries", "description": "Milk, Bread, Cheese", "completed": False}, {"id": 2, "title": "Read a book", "description": "The Catcher in the Rye", "completed": False}]
+
+Get a todo by ID
+get-todo 1
+
+Expected Response:
+{"id": 1, "title": "Buy groceries", "description": "Milk, Bread, Cheese", "completed": False}
+
+Create a new todo
+create-todo "New Task" "Description of the new task"
+
+Expected Response:
+Created todo: {"id": 3, "title": "New Task", "description": "Description of the new task", "completed": False}
+
 ## API Documentation
 Explore the API endpoints using Swagger UI:
 
