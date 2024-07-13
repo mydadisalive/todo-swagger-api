@@ -34,7 +34,7 @@ pip install -r requirements.txt
 To run the API server using Uvicorn:
 
 ```bash
-uvicorn api.main --reload
+uvicorn api.main:app --reload
 ```
 
 The API will be available at: [http://127.0.0.1:8000](http://127.0.0.1:8000)
