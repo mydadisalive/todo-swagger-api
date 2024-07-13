@@ -106,6 +106,28 @@ Explore the API endpoints using Swagger UI:
 Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 ReDoc: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
+## Using the Generated OpenAPI Client
+This project uses openapi-python-client to generate a Python client from the OpenAPI specification. To run tests using the generated client:
+
+Generate the Client
+Ensure the API server is running and then generate the client:
+
+```bash
+openapi-python-client generate --url http://127.0.0.1:8000/openapi.json --overwrite
+```
+
+Running the Test Script
+Run the provided test script to verify the functionality of the generated client:
+
+```bash
+python tests/openapi-python-client-test.py
+```
+
+Review Changes: Check the generated client for any changes in the API endpoints, models, or request/response formats.
+Update Test Script and Code: Modify your test script (tests/openapi-python-client-test.py) and other code to accommodate any changes. For example, update the imports and API calls if new endpoints are added or existing ones are modified.
+
+E.g: GET /todos/completed is added:
+
 ## Testing
 
 Run tests for both the API and CLI:
