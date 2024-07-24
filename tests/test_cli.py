@@ -1,5 +1,8 @@
 import subprocess
 import pytest
+from faker import Faker
+
+fake = Faker()
 
 def run_cli_command(command):
     result = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -58,3 +61,12 @@ def test_delete_todo():
     assert result.returncode == 0
     output = result.stdout.strip()
     assert "Deleted todo: ID: 1" in output  # Check for ID only since title may vary
+
+# New test using Faker
+def test_create_todo_with_faker():
+    title = fake.catch_phrase()  # Generates a realistic task title
+    description = fake.text(max_nb_chars=50)  # Generates a short description
+    result = run_cli_command(f'python cli/cli.py create-todo "{title}" "{description}"')
+    assert result.returncode == 0
+    output = result.stdout.strip()
+    assert f"Created todo: ID: 3, Title: {title}, Completed: False" in output
