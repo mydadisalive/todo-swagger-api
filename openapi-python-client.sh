@@ -1,0 +1,1 @@
+openapi-python-client generate --url --overwrite
