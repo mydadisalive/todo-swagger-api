@@ -10,8 +10,11 @@ from fast_api_client.api.default import (
 from fast_api_client.models.todo_create import TodoCreate  # Adjust the import based on actual structure
 from fast_api_client.models.todo import Todo
 from fast_api_client.errors import UnexpectedStatus
+import asyncio
+import websockets
 
 client = Client(base_url="http://127.0.0.1:8000")
+websocket_url = "ws://127.0.0.1:8000/ws"  # Adjust as needed
 
 @click.group()
 def cli():
@@ -71,6 +74,30 @@ def delete_todo_by_id(todo_id):
         deleted_todo = delete_todo_todos_todo_id_delete.sync(client=client, todo_id=todo_id)
         click.echo(f"Deleted todo: ID: {deleted_todo.id}, Title: {deleted_todo.title}, Completed: {deleted_todo.completed}")
     except UnexpectedStatus as e:
+        click.echo(f"Error: {e}")
+
+@cli.command(name="websocket")
+def websocket_command():
+    """Connect to the WebSocket server."""
+    async def connect_websocket():
+        async with websockets.connect(websocket_url) as websocket:
+            click.echo("Connected to the WebSocket server.")
+            try:
+                while True:
+                    command = input("Enter command: (type help for help) ")
+                    await websocket.send(command)
+                    response = await websocket.recv()
+                    click.echo(f"Received: {response}")
+                    if command == "exit":
+                        break
+            except websockets.exceptions.ConnectionClosed:
+                click.echo("WebSocket connection closed")
+            finally:
+                await websocket.close()
+
+    try:
+        asyncio.run(connect_websocket())
+    except Exception as e:
         click.echo(f"Error: {e}")
 
 if __name__ == "__main__":
