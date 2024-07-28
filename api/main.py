@@ -1,12 +1,21 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, HTTPException
 from api.routers import todos
 from pydantic import BaseModel
 from typing import Optional, List
+import logging
 
 app = FastAPI()
 
+# Initialize logger
+logger = logging.getLogger("uvicorn")
+logging.basicConfig(level=logging.INFO)
+
 @app.get("/")
 async def read_root():
+    """
+    Root endpoint returning a welcome message.
+    """
+    logger.info("Root endpoint accessed")
     return {"message": "Welcome to the Todo API!"}
 
 app.include_router(todos.router)
@@ -18,6 +27,9 @@ todos = [
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    """
+    WebSocket endpoint for real-time todo management commands.
+    """
     await websocket.accept()
     try:
         while True:
@@ -27,24 +39,30 @@ async def websocket_endpoint(websocket: WebSocket):
 
             if command == "list-todos":
                 await websocket.send_text(str(todos))
+                logger.info("list-todos command executed")
 
             elif command == "get-todo":
                 if len(command_parts) < 2:
                     await websocket.send_text("Error: Missing todo_id")
+                    logger.error("get-todo command failed: Missing todo_id")
                     continue
                 try:
                     todo_id = int(command_parts[1])
                     todo = next((todo for todo in todos if todo["id"] == todo_id), None)
                     if todo is None:
                         await websocket.send_text("Error: Todo not found")
+                        logger.error(f"get-todo command failed: Todo {todo_id} not found")
                     else:
                         await websocket.send_text(str(todo))
+                        logger.info(f"get-todo command executed: Todo {todo_id} retrieved")
                 except ValueError:
                     await websocket.send_text("Error: Invalid todo_id")
+                    logger.error("get-todo command failed: Invalid todo_id")
 
             elif command == "create-todo":
                 if len(command_parts) < 2:
                     await websocket.send_text("Error: Missing title")
+                    logger.error("create-todo command failed: Missing title")
                     continue
                 title = command_parts[1]
                 description = " ".join(command_parts[2:]) if len(command_parts) > 2 else None
@@ -52,10 +70,12 @@ async def websocket_endpoint(websocket: WebSocket):
                 new_todo = {"id": new_id, "title": title, "description": description, "completed": False}
                 todos.append(new_todo)
                 await websocket.send_text(f"Created todo: {new_todo}")
+                logger.info(f"create-todo command executed: {new_todo}")
 
             elif command == "update-todo":
                 if len(command_parts) < 3:
                     await websocket.send_text("Error: Missing parameters")
+                    logger.error("update-todo command failed: Missing parameters")
                     continue
                 try:
                     todo_id = int(command_parts[1])
@@ -67,15 +87,19 @@ async def websocket_endpoint(websocket: WebSocket):
                         if todo["id"] == todo_id:
                             todos[index] = updated_todo
                             await websocket.send_text(f"Updated todo: {updated_todo}")
+                            logger.info(f"update-todo command executed: {updated_todo}")
                             break
                     else:
                         await websocket.send_text("Error: Todo not found")
+                        logger.error(f"update-todo command failed: Todo {todo_id} not found")
                 except ValueError:
                     await websocket.send_text("Error: Invalid todo_id")
+                    logger.error("update-todo command failed: Invalid todo_id")
 
             elif command == "delete-todo":
                 if len(command_parts) < 2:
                     await websocket.send_text("Error: Missing todo_id")
+                    logger.error("delete-todo command failed: Missing todo_id")
                     continue
                 try:
                     todo_id = int(command_parts[1])
@@ -83,11 +107,14 @@ async def websocket_endpoint(websocket: WebSocket):
                         if todo["id"] == todo_id:
                             deleted_todo = todos.pop(index)
                             await websocket.send_text(f"Deleted todo: {deleted_todo}")
+                            logger.info(f"delete-todo command executed: {deleted_todo}")
                             break
                     else:
                         await websocket.send_text("Error: Todo not found")
+                        logger.error(f"delete-todo command failed: Todo {todo_id} not found")
                 except ValueError:
                     await websocket.send_text("Error: Invalid todo_id")
+                    logger.error("delete-todo command failed: Invalid todo_id")
 
             elif command == "help":
                 help_text = """
@@ -119,13 +146,16 @@ Usage Examples:
     exit
 """
                 await websocket.send_text(help_text)
+                logger.info("help command executed")
 
             elif command == "exit":
                 await websocket.send_text("Exiting WebSocket session.")
+                logger.info("exit command executed")
                 break
 
             else:
                 await websocket.send_text(f"Error: Command '{command}' not supported")
+                logger.error(f"Unsupported command '{command}' received")
     except Exception as e:
+        logger.error(f"WebSocket error: {e}")
         await websocket.close()
-
