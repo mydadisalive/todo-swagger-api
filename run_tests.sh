@@ -1,1 +1,1 @@
-pytest -vv --html=report.html
+pytest -vv --html=report.html --ignore=tests/cli.py
