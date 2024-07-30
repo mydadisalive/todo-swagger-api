@@ -87,4 +87,5 @@ def test_list_todos_with_mock():
         assert "ID: 2, Title: Read a book, Completed: False" in output
         mock_run.assert_called_once_with("python cli/auto_generated_cli.py list-todos", shell=True, capture_output=True, text=True)
 
-# TODO: add more tests here
+# TODO: add more tests here.
+# TODO: use side_effects
