@@ -7,3 +7,4 @@ websockets
 pytest-html
 faker
 pyinstaller
+-e fast-api-client
